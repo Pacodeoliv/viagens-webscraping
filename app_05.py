@@ -49,10 +49,15 @@ def setup_database(conn):
     conn.commit()
 
 
-def save_to_dataframe(product_info, df):
+def save_to_database(conn, product_info):
     new_row = pd.DataFrame([product_info])
-    df = pd.concat([df, new_row], ignore_index = True)
-    return df
+    new_row.to_sql('prices', conn, if_exists='append', index=False)
+
+    
+    
+    
+    #df = pd.concat([df, new_row], ignore_index = True)
+    #return df
 
 
 
@@ -60,7 +65,8 @@ def save_to_dataframe(product_info, df):
 if __name__ == "__main__":
 
 
-    conn = 
+    conn = create_connection()
+    setup_database(conn)
 
     df = pd.DataFrame()
     
@@ -68,7 +74,7 @@ if __name__ == "__main__":
          
         page_content = fetch_page()
         produto_info = parse_page(page_content)
-        df = save_to_dataframe(produto_info, df)
-        print(df)
+        df = save_to_database(conn, produto_info)
+        print("Dados salvos no banco de dados", produto_info)
         time.sleep(10)
     
