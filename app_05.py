@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup 
 import time
 import pandas as pd
-
+import sqlite3
 
 def fetch_page():
         url = "https://www.mercadolivre.com.br/creatina-monohidratada-100-300g-integralmedica-sabor-neutro/p/MLB6204289#polycard_client=search-nordic&searchVariation=MLB6204289&wid=MLB3582503463&position=5&search_layout=stack&type=product&tracking_id=669de623-ad9e-4fa7-a646-3d60887bf208&sid=search"
@@ -27,6 +27,28 @@ def parse_page(html):
         'timestamp': timestamp
     }
     
+def create_connection(db_name = 'creatina_prices.db'):
+    """Cria uma conexão com o banco de dados SQLite"""
+    conn = sqlite3.connect(db_name)
+    return conn
+
+
+def setup_database(conn):
+    """Cria a tabela de preços se ela não existir"""
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS prices (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_name TEXT,
+        old_price INTEGER,
+        new_price INTEGER,
+        installment_price INTEGER,
+        timestamp TEXT
+        )
+    ''')
+    conn.commit()
+
+
 def save_to_dataframe(product_info, df):
     new_row = pd.DataFrame([product_info])
     df = pd.concat([df, new_row], ignore_index = True)
@@ -36,6 +58,9 @@ def save_to_dataframe(product_info, df):
 
 
 if __name__ == "__main__":
+
+
+    conn = 
 
     df = pd.DataFrame()
     
